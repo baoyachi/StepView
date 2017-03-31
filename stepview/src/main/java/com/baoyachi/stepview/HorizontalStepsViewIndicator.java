@@ -134,24 +134,33 @@ public class HorizontalStepsViewIndicator extends View
     @Override
     protected synchronized void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
     {
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
         int width = defaultStepIndicatorNum * 2;
-        if(MeasureSpec.UNSPECIFIED != MeasureSpec.getMode(widthMeasureSpec))
-        {
-            screenWidth = MeasureSpec.getSize(widthMeasureSpec);
-        }
         int height = defaultStepIndicatorNum;
-        if(MeasureSpec.UNSPECIFIED != MeasureSpec.getMode(heightMeasureSpec))
-        {
-            height = Math.min(height, MeasureSpec.getSize(heightMeasureSpec));
+        if (widthMode == MeasureSpec.EXACTLY) {
+            // Parent has told us how big to be. So be it.
+            width = widthSize;
+        } else {
+            width = Math.min(width, widthSize);
         }
-        width = (int) (mStepNum * mCircleRadius * 2 - (mStepNum - 1) * mLinePadding);
+        screenWidth = width;
+
+        if(heightMode != MeasureSpec.UNSPECIFIED) {
+            height = Math.min(height, heightSize);
+        }
+
         setMeasuredDimension(width, height);
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh)
+    protected synchronized void onDraw(Canvas canvas)
     {
-        super.onSizeChanged(w, h, oldw, oldh);
+        super.onDraw(canvas);
+
         //获取中间的高度,目的是为了让该view绘制的线和圆在该view垂直居中   get view centerY，keep current stepview center vertical
         mCenterY = 0.5f * getHeight();
         //获取左上方Y的位置，获取该点的意义是为了方便画矩形左上的Y位置
@@ -168,19 +177,6 @@ public class HorizontalStepsViewIndicator extends View
             mCircleCenterPointPositionList.add(paddingLeft + mCircleRadius + i * mCircleRadius * 2 + i * mLinePadding);
         }
 
-        /**
-         * set listener
-         */
-        if(mOnDrawListener!=null)
-        {
-            mOnDrawListener.ondrawIndicator();
-        }
-    }
-
-    @Override
-    protected synchronized void onDraw(Canvas canvas)
-    {
-        super.onDraw(canvas);
         if(mOnDrawListener!=null)
         {
             mOnDrawListener.ondrawIndicator();
