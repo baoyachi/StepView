@@ -49,10 +49,9 @@ public class HorizontalStepsViewIndicator extends View
     private int mUnCompletedLineColor = ContextCompat.getColor(getContext(), R.color.uncompleted_color);//定义默认未完成线的颜色  definition
     private int mCompletedLineColor = Color.WHITE;//定义默认完成线的颜色      definition mCompletedLineColor
     private PathEffect mEffects;
-    private int mComplectingPosition;//正在进行position   underway position
-
 
     private Path mPath;
+    private final Rect mRect = new Rect();
 
     private OnDrawIndicatorListener mOnDrawListener;
     private int screenWidth;//this screen width
@@ -197,7 +196,7 @@ public class HorizontalStepsViewIndicator extends View
             //后一个ComplectedXPosition
             final float afterComplectedXPosition = mCircleCenterPointPositionList.get(i + 1);
 
-            if(i <= mComplectingPosition&&mStepBeanList.get(0).getState()!=StepBean.STEP_UNDO)//判断在完成之前的所有点
+            if(mStepBeanList.get(i).getState()==StepBean.STEP_COMPLETED)//判断在完成之前的所有点
             {
                 //判断在完成之前的所有点，画完成的线，这里是矩形,很细的矩形，类似线，为了做区分，好看些
                 canvas.drawRect(preComplectedXPosition + mCircleRadius - 10, mLeftY, afterComplectedXPosition - mCircleRadius + 10, mRightY, mCompletedPaint);
@@ -206,6 +205,7 @@ public class HorizontalStepsViewIndicator extends View
                 mPath.moveTo(preComplectedXPosition + mCircleRadius, mCenterY);
                 mPath.lineTo(afterComplectedXPosition - mCircleRadius, mCenterY);
                 canvas.drawPath(mPath, mUnCompletedPaint);
+                mPath.reset();
             }
         }
         //-----------------------画线-------draw line-----------------------------------------------
@@ -215,23 +215,23 @@ public class HorizontalStepsViewIndicator extends View
         for(int i = 0; i < mCircleCenterPointPositionList.size(); i++)
         {
             final float currentComplectedXPosition = mCircleCenterPointPositionList.get(i);
-            Rect rect = new Rect((int) (currentComplectedXPosition - mCircleRadius), (int) (mCenterY - mCircleRadius), (int) (currentComplectedXPosition + mCircleRadius), (int) (mCenterY + mCircleRadius));
+            mRect.set((int) (currentComplectedXPosition - mCircleRadius), (int) (mCenterY - mCircleRadius), (int) (currentComplectedXPosition + mCircleRadius), (int) (mCenterY + mCircleRadius));
 
             StepBean stepsBean = mStepBeanList.get(i);
 
             if(stepsBean.getState()==StepBean.STEP_UNDO)
             {
-                mDefaultIcon.setBounds(rect);
+                mDefaultIcon.setBounds(mRect);
                 mDefaultIcon.draw(canvas);
             }else if(stepsBean.getState()==StepBean.STEP_CURRENT)
             {
                 mCompletedPaint.setColor(Color.WHITE);
                 canvas.drawCircle(currentComplectedXPosition, mCenterY, mCircleRadius * 1.1f, mCompletedPaint);
-                mAttentionIcon.setBounds(rect);
+                mAttentionIcon.setBounds(mRect);
                 mAttentionIcon.draw(canvas);
             }else if(stepsBean.getState()==StepBean.STEP_COMPLETED)
             {
-                mCompleteIcon.setBounds(rect);
+                mCompleteIcon.setBounds(mRect);
                 mCompleteIcon.draw(canvas);
             }
         }
@@ -257,20 +257,6 @@ public class HorizontalStepsViewIndicator extends View
     {
         this.mStepBeanList = stepsBeanList;
         mStepNum = mStepBeanList.size();
-
-        if(mStepBeanList!=null&&mStepBeanList.size()>0)
-        {
-            for(int i = 0;i<mStepNum;i++)
-            {
-                StepBean stepsBean = mStepBeanList.get(i);
-                {
-                    if(stepsBean.getState()==StepBean.STEP_COMPLETED)
-                    {
-                        mComplectingPosition = i;
-                    }
-                }
-            }
-        }
 
         requestLayout();
     }
