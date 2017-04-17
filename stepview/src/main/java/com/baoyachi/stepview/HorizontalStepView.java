@@ -8,13 +8,13 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.baoyachi.stepview.bean.StepBean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,13 +25,14 @@ import java.util.List;
 public class HorizontalStepView extends LinearLayout implements HorizontalStepsViewIndicator.OnDrawIndicatorListener
 {
     private RelativeLayout mTextContainer;
+    private List<TextView> mTextViews = new ArrayList<>();
+
     private HorizontalStepsViewIndicator mStepsViewIndicator;
     private List<StepBean> mStepBeanList;
-    private int mComplectingPosition;
+
     private int mUnComplectedTextColor = ContextCompat.getColor(getContext(), R.color.uncompleted_text_color);//定义默认未完成文字的颜色;
     private int mComplectedTextColor = ContextCompat.getColor(getContext(), android.R.color.white);//定义默认完成文字的颜色;
     private int mTextSize = 14;//default textSize
-    private TextView mTextView;
 
     public HorizontalStepView(Context context)
     {
@@ -67,6 +68,7 @@ public class HorizontalStepView extends LinearLayout implements HorizontalStepsV
     {
         mStepBeanList = stepsBeanList;
         mStepsViewIndicator.setStepNum(mStepBeanList);
+        createTextViews();
         return this;
     }
 
@@ -170,37 +172,67 @@ public class HorizontalStepView extends LinearLayout implements HorizontalStepsV
     @Override
     public void ondrawIndicator()
     {
-        if(mTextContainer != null)
-        {
-            mTextContainer.removeAllViews();
-            List<Float> complectedXPosition = mStepsViewIndicator.getCircleCenterPointPositionList();
-            if(mStepBeanList != null && complectedXPosition != null && complectedXPosition.size() > 0)
-            {
-                for(int i = 0; i < mStepBeanList.size(); i++)
-                {
-                    mTextView = new TextView(getContext());
-                    mTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTextSize);
-                    mTextView.setText(mStepBeanList.get(i).getName());
-                    int spec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-                    mTextView.measure(spec, spec);
-                    // getMeasuredWidth
-                    int measuredWidth = mTextView.getMeasuredWidth();
-                    mTextView.setX(complectedXPosition.get(i) - measuredWidth / 2);
-                    mTextView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        updateStepTexts();
+    }
 
-                    if(i <= mComplectingPosition)
-                    {
-                        mTextView.setTypeface(null, Typeface.BOLD);
-                        mTextView.setTextColor(mComplectedTextColor);
-                    } else
-                    {
-                        mTextView.setTextColor(mUnComplectedTextColor);
-                    }
-
-                    mTextContainer.addView(mTextView);
+    private void createTextViews()
+    {
+        if (mStepBeanList != null) {
+            int viewCount = mTextViews.size();
+            int beanCount = mStepBeanList.size();
+            int delta = viewCount - beanCount;
+            if (beanCount == 0) {
+                mTextContainer.removeAllViews();
+                mTextViews.clear();
+            } else if (delta < 0) {
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                for (int i = viewCount; i < beanCount; i++) {
+                    TextView t = (TextView) inflater.inflate(R.layout.widget_setpsview_text_item, mTextContainer, false);
+                    mTextContainer.addView(t);
+                    mTextViews.add(t);
                 }
+            } else if (delta > 0) {
+                mTextContainer.removeViews(beanCount, delta);
+                mTextViews.removeAll(mTextViews.subList(beanCount, viewCount));
             }
         }
     }
 
+    private void updateStepTexts()
+    {
+        List<Float> complectedXPosition = mStepsViewIndicator.getCircleCenterPointPositionList();
+        if (mStepBeanList != null && complectedXPosition != null && complectedXPosition.size() > 0) {
+
+            if (mStepBeanList.size() != mTextViews.size()) {
+                return;
+            }
+
+            for (int i = 0; i < mStepBeanList.size(); i++) {
+                StepBean bean = mStepBeanList.get(i);
+                TextView t = mTextViews.get(i);
+
+                t.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTextSize);
+                t.setText(bean.getName());
+
+                int spec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                t.measure(spec, spec);
+                int measuredWidth = t.getMeasuredWidth();
+                t.setX(complectedXPosition.get(i) - measuredWidth / 2);
+
+                switch (bean.getState()) {
+                    case StepBean.STEP_COMPLETED:
+                        // fall through
+                    case StepBean.STEP_UNDO:
+                        t.setTypeface(null, Typeface.NORMAL);
+                        t.setTextColor(mUnComplectedTextColor);
+                        break;
+                    case StepBean.STEP_CURRENT:
+                        t.setTypeface(null, Typeface.BOLD);
+                        t.setTextColor(mComplectedTextColor);
+                        break;
+                }
+            }
+            mTextContainer.requestLayout();
+        }
+    }
 }
