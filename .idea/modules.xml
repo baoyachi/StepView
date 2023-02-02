@@ -2,7 +2,16 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Projects.StepView.iml" filepath="$PROJECT_DIR$/.idea/modules/Projects.StepView.iml" />
       <module fileurl="file://$PROJECT_DIR$/StepView.iml" filepath="$PROJECT_DIR$/StepView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/StepView.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/StepView.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/StepView.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/StepView.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/StepView.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/StepView.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/StepView.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/StepView.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/stepview/StepView.stepview.iml" filepath="$PROJECT_DIR$/.idea/modules/stepview/StepView.stepview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/stepview/StepView.stepview.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/stepview/StepView.stepview.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/stepview/StepView.stepview.main.iml" filepath="$PROJECT_DIR$/.idea/modules/stepview/StepView.stepview.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/stepview/StepView.stepview.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/stepview/StepView.stepview.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/stepview/stepview.iml" filepath="$PROJECT_DIR$/stepview/stepview.iml" />
     </modules>
