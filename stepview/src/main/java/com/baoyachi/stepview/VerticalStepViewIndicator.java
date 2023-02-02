@@ -54,7 +54,7 @@ public class VerticalStepViewIndicator extends View
     private Path mPath;
 
     private OnDrawIndicatorListener mOnDrawListener;
-    private Rect mRect;
+    private final Rect mRect = new Rect();
     private int mHeight;//这个控件的动态高度    this view dynamic height
     private boolean mIsReverseDraw;//is reverse draw this view;
 
@@ -166,6 +166,7 @@ public class VerticalStepViewIndicator extends View
         mLeftY = mCenterX - (mCompletedLineHeight / 2);
         mRightY = mCenterX + (mCompletedLineHeight / 2);
 
+        mCircleCenterPointPositionList.clear();
         for(int i = 0; i < mStepNum; i++)
         {
             //reverse draw VerticalStepViewIndicator
@@ -229,7 +230,7 @@ public class VerticalStepViewIndicator extends View
                     mPath.lineTo(mCenterX, afterComplectedXPosition - mCircleRadius);
                     canvas.drawPath(mPath, mUnCompletedPaint);
                 }
-
+                mPath.reset();
             }
         }
         //-----------------------画线-------draw line-----------------------------------------------
@@ -238,7 +239,7 @@ public class VerticalStepViewIndicator extends View
         for(int i = 0; i < mCircleCenterPointPositionList.size(); i++)
         {
             final float currentComplectedXPosition = mCircleCenterPointPositionList.get(i);
-            mRect = new Rect((int) (mCenterX - mCircleRadius), (int) (currentComplectedXPosition - mCircleRadius), (int) (mCenterX + mCircleRadius), (int) (currentComplectedXPosition + mCircleRadius));
+            mRect.set((int) (mCenterX - mCircleRadius), (int) (currentComplectedXPosition - mCircleRadius), (int) (mCenterX + mCircleRadius), (int) (currentComplectedXPosition + mCircleRadius));
             if(i < mComplectingPosition)
             {
                 mCompleteIcon.setBounds(mRect);

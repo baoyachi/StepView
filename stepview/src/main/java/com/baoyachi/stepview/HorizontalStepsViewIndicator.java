@@ -49,10 +49,9 @@ public class HorizontalStepsViewIndicator extends View
     private int mUnCompletedLineColor = ContextCompat.getColor(getContext(), R.color.uncompleted_color);//定义默认未完成线的颜色  definition
     private int mCompletedLineColor = Color.WHITE;//定义默认完成线的颜色      definition mCompletedLineColor
     private PathEffect mEffects;
-    private int mComplectingPosition;//正在进行position   underway position
-
 
     private Path mPath;
+    private final Rect mRect = new Rect();
 
     private OnDrawIndicatorListener mOnDrawListener;
     private int screenWidth;//this screen width
@@ -135,24 +134,33 @@ public class HorizontalStepsViewIndicator extends View
     @Override
     protected synchronized void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
     {
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
         int width = defaultStepIndicatorNum * 2;
-        if(MeasureSpec.UNSPECIFIED != MeasureSpec.getMode(widthMeasureSpec))
-        {
-            screenWidth = MeasureSpec.getSize(widthMeasureSpec);
-        }
         int height = defaultStepIndicatorNum;
-        if(MeasureSpec.UNSPECIFIED != MeasureSpec.getMode(heightMeasureSpec))
-        {
-            height = Math.min(height, MeasureSpec.getSize(heightMeasureSpec));
+        if (widthMode == MeasureSpec.EXACTLY) {
+            // Parent has told us how big to be. So be it.
+            width = widthSize;
+        } else {
+            width = Math.min(width, widthSize);
         }
-        width = (int) (mStepNum * mCircleRadius * 2 - (mStepNum - 1) * mLinePadding);
+        screenWidth = width;
+
+        if(heightMode != MeasureSpec.UNSPECIFIED) {
+            height = Math.min(height, heightSize);
+        }
+
         setMeasuredDimension(width, height);
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh)
+    protected synchronized void onDraw(Canvas canvas)
     {
-        super.onSizeChanged(w, h, oldw, oldh);
+        super.onDraw(canvas);
+
         //获取中间的高度,目的是为了让该view绘制的线和圆在该view垂直居中   get view centerY，keep current stepview center vertical
         mCenterY = 0.5f * getHeight();
         //获取左上方Y的位置，获取该点的意义是为了方便画矩形左上的Y位置
@@ -169,19 +177,6 @@ public class HorizontalStepsViewIndicator extends View
             mCircleCenterPointPositionList.add(paddingLeft + mCircleRadius + i * mCircleRadius * 2 + i * mLinePadding);
         }
 
-        /**
-         * set listener
-         */
-        if(mOnDrawListener!=null)
-        {
-            mOnDrawListener.ondrawIndicator();
-        }
-    }
-
-    @Override
-    protected synchronized void onDraw(Canvas canvas)
-    {
-        super.onDraw(canvas);
         if(mOnDrawListener!=null)
         {
             mOnDrawListener.ondrawIndicator();
@@ -197,7 +192,7 @@ public class HorizontalStepsViewIndicator extends View
             //后一个ComplectedXPosition
             final float afterComplectedXPosition = mCircleCenterPointPositionList.get(i + 1);
 
-            if(i <= mComplectingPosition&&mStepBeanList.get(0).getState()!=StepBean.STEP_UNDO)//判断在完成之前的所有点
+            if(mStepBeanList.get(i).getState()==StepBean.STEP_COMPLETED)//判断在完成之前的所有点
             {
                 //判断在完成之前的所有点，画完成的线，这里是矩形,很细的矩形，类似线，为了做区分，好看些
                 canvas.drawRect(preComplectedXPosition + mCircleRadius - 10, mLeftY, afterComplectedXPosition - mCircleRadius + 10, mRightY, mCompletedPaint);
@@ -206,6 +201,7 @@ public class HorizontalStepsViewIndicator extends View
                 mPath.moveTo(preComplectedXPosition + mCircleRadius, mCenterY);
                 mPath.lineTo(afterComplectedXPosition - mCircleRadius, mCenterY);
                 canvas.drawPath(mPath, mUnCompletedPaint);
+                mPath.reset();
             }
         }
         //-----------------------画线-------draw line-----------------------------------------------
@@ -215,23 +211,23 @@ public class HorizontalStepsViewIndicator extends View
         for(int i = 0; i < mCircleCenterPointPositionList.size(); i++)
         {
             final float currentComplectedXPosition = mCircleCenterPointPositionList.get(i);
-            Rect rect = new Rect((int) (currentComplectedXPosition - mCircleRadius), (int) (mCenterY - mCircleRadius), (int) (currentComplectedXPosition + mCircleRadius), (int) (mCenterY + mCircleRadius));
+            mRect.set((int) (currentComplectedXPosition - mCircleRadius), (int) (mCenterY - mCircleRadius), (int) (currentComplectedXPosition + mCircleRadius), (int) (mCenterY + mCircleRadius));
 
             StepBean stepsBean = mStepBeanList.get(i);
 
             if(stepsBean.getState()==StepBean.STEP_UNDO)
             {
-                mDefaultIcon.setBounds(rect);
+                mDefaultIcon.setBounds(mRect);
                 mDefaultIcon.draw(canvas);
             }else if(stepsBean.getState()==StepBean.STEP_CURRENT)
             {
                 mCompletedPaint.setColor(Color.WHITE);
                 canvas.drawCircle(currentComplectedXPosition, mCenterY, mCircleRadius * 1.1f, mCompletedPaint);
-                mAttentionIcon.setBounds(rect);
+                mAttentionIcon.setBounds(mRect);
                 mAttentionIcon.draw(canvas);
             }else if(stepsBean.getState()==StepBean.STEP_COMPLETED)
             {
-                mCompleteIcon.setBounds(rect);
+                mCompleteIcon.setBounds(mRect);
                 mCompleteIcon.draw(canvas);
             }
         }
@@ -257,20 +253,6 @@ public class HorizontalStepsViewIndicator extends View
     {
         this.mStepBeanList = stepsBeanList;
         mStepNum = mStepBeanList.size();
-
-        if(mStepBeanList!=null&&mStepBeanList.size()>0)
-        {
-            for(int i = 0;i<mStepNum;i++)
-            {
-                StepBean stepsBean = mStepBeanList.get(i);
-                {
-                    if(stepsBean.getState()==StepBean.STEP_COMPLETED)
-                    {
-                        mComplectingPosition = i;
-                    }
-                }
-            }
-        }
 
         requestLayout();
     }
