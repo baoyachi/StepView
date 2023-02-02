@@ -67,6 +67,18 @@ public class HorizontalStepView extends LinearLayout implements HorizontalStepsV
     {
         mStepBeanList = stepsBeanList;
         mStepsViewIndicator.setStepNum(mStepBeanList);
+
+        // calculate completing position
+        if (mStepBeanList != null && mStepBeanList.size() > 0) {
+            for (int i = 0; i < mStepBeanList.size(); i++) {
+                StepBean stepsBean = mStepBeanList.get(i);
+                {
+                    if (stepsBean.getState() == StepBean.STEP_COMPLETED) {
+                        mComplectingPosition = i;
+                    }
+                }
+            }
+        }
         return this;
     }
 
