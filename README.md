@@ -5,14 +5,14 @@ Step by step. Step indicator. Flow indicator。
 
 <img src="art/step-icon.png"></img>
 
-##snapshot
-####like this:HorizontalStepView
+## snapshot
+#### like this:HorizontalStepView
 <img src="art/snapshot.png"></img>
 
-####like this 
+#### like this 
 <img width="300" width=“500” src="art/splash.png"></img>
 
-####also like this:VerticalStepView
+#### also like this:VerticalStepView
 <img width="300" width=“500” src="art/vertical_stepview.gif"></img>
 
 Yeah，I am not working in JD，Just imitate.It's a joke .ha ha ha 
@@ -22,7 +22,7 @@ It is looks like so beautiful.
 
 
 
-##how to use
+## how to use
 
 Add it in your root build.gradle at the end of repositories:
 
@@ -38,7 +38,7 @@ Step 2. Add the dependency
 
 
 
-###use HorizontalStepView
+### use HorizontalStepView
 
 in xml
 
@@ -78,7 +78,7 @@ HorizontalStepView setpview5 = (HorizontalStepView) mView.findViewById(R.id.step
                 .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(getActivity(), R.drawable.default_icon))//设置StepsViewIndicator DefaultIcon
                 .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(getActivity(), R.drawable.attention));//设置StepsViewIndicator AttentionIcon
 ```
-###use VerticalStepView
+### use VerticalStepView
 this widget can reverse or forward draw,please look at below jd express picture 
 
 <img width="300" width=“500” src="art/jd_reverse_express.png"></img>
@@ -144,29 +144,29 @@ mSetpview0 = (VerticalStepView) findViewById(R.id.step_view0);
 
 Use So Simple!!!
 
-##See Detail
+## See Detail
 
 > [详细链接请点击](Introduction.md)
 
 
 
-###参考链接
+### 参考链接
 [Android-StepsView](https://github.com/anton46/Android-StepsView)
 
-##Thanks
+## Thanks
 * 感谢 [iconfont](http://iconfont.cn/) 提供的图片资源
 * 感谢 [anton46](https://github.com/anton46/) 提供的源码作参考
 
-###图片来源
+### 图片来源
 * [step](http://iconfont.cn/search?q=step)
 * [complted](http://iconfont.cn/search?q=right)
 * [attention](http://iconfont.cn/search?q=attention)
 * [default-icon](http://iconfont.cn/search?q=default)
 
-##End
+## End
 喜欢这个控件的小伙伴可以点击star哦！
 
-##Contact us
+## Contact us
 * 【简书】[包牙齿](http://www.jianshu.com/users/7096f185d063/)
 
 * 【微博】[包牙齿](http://weibo.com/baoyachi)

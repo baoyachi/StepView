@@ -1,8 +1,8 @@
-##StepView Detail Introduction
+## StepView Detail Introduction
 现在,绝大部分公司对于一个项目订单流程控制不外乎从订单的初始状态到订单完成的状态，总结起来就是关于一个物体（订单/工单）状态变化的事物属性。所以就有了下面类似图片的效果，从订单的初始状态到订单完成。一个好的流程展示，对于工作效率的提高尤其的关键。该库代码看起来简洁，加上了详细的备注，看起来不会那么枯燥，也方便定制。那么废话不多说，直接进入正题。
 
 
-##preview
+## preview
 可能当前的StepView展示的点是动态的，有时候是两个，有时候是三个，有时候是四个甚至五个六个，之前有想过展示成下面的效果。
 <img src="art/snapshot_before.png"></img>
 
@@ -11,7 +11,7 @@
 
 上下对比下是不是好看了很多呢。
 
-##What can be learned about this page
+## What can be learned about this page
 好了，我们通过这篇文章可以学习哪些知识呢？
 
 * 自定义控件的加强
@@ -21,7 +21,7 @@
 * 如何绘制圆
 * 加上小小的数学计算，哈哈，开个小玩笑，学过数学，应该不成问题！
 
-##start-pre
+## start-pre
 写这个开源项目前的热身
 
 * 首先我们来画一个矩形
@@ -99,10 +99,10 @@ DashPathEffect:DashPathEffect是PathEffect类的一个子类,可以使paint画�
 
 
 
-##构成
+## 构成
 我们拿这个局部图来做栗子:
 
-###因此整个这一张图是一个组合控件，
+### 因此整个这一张图是一个组合控件，
 <img src="art/snapshot.png"></img>
 
 ```java
@@ -127,10 +127,10 @@ DashPathEffect:DashPathEffect是PathEffect类的一个子类,可以使paint画�
 </LinearLayout>
 ```
 
-####上面是我们自定义的StepsViewIndicator，<img src="art/draw_stepview.png"></img>
-####下面是我们展示的文字,因为是多个文字组合，我们下面应该是一个ViewGroup容器<img src="art/draw_stepview_text.png"></img>
+#### 上面是我们自定义的StepsViewIndicator，<img src="art/draw_stepview.png"></img>
+#### 下面是我们展示的文字,因为是多个文字组合，我们下面应该是一个ViewGroup容器<img src="art/draw_stepview_text.png"></img>
 
-###分析：
+### 分析：
 * 如何做到居中显示
 
 	1.首先得到该控件的宽度。
@@ -182,7 +182,7 @@ DashPathEffect:DashPathEffect是PathEffect类的一个子类,可以使paint画�
   }
 ```
 
-##Global graph 我们先来看下面这张动态全局预览图.
+## Global graph 我们先来看下面这张动态全局预览图.
 我们来看下全局预览图，当前StepView的展示是根据StepView的位置动态调整的。
 
 <img width="300" width=“600”  src="art/splash.png"></img>
@@ -191,7 +191,7 @@ DashPathEffect:DashPathEffect是PathEffect类的一个子类,可以使paint画�
 一步步解析。
 
 
-###第一步 init() 初始化
+### 第一步 init() 初始化
 
 因为该view分为完成块和未完成块，因此，init()主要是在做一些初始化的信息设置
 
@@ -238,7 +238,7 @@ DashPathEffect:DashPathEffect是PathEffect类的一个子类,可以使paint画�
         mAttentionIcon = ContextCompat.getDrawable(getContext(), R.drawable.attention);//正在进行的icon
         mDefaultIcon = ContextCompat.getDrawable(getContext(), R.drawable.default_icon);//未完成的icon
 
-###第二步
+### 第二步
 * onMeasure()
 哈哈，好熟悉的方法，这里的作用为了测量自身宽和高
 
@@ -260,7 +260,7 @@ DashPathEffect:DashPathEffect是PathEffect类的一个子类,可以使paint画�
 	    }
 ```
 
-###第三步 onSizeChanged(int w, int h, int oldw, int oldh)
+### 第三步 onSizeChanged(int w, int h, int oldw, int oldh)
 动态计算当前view的位置,这里的计算paddingLeft和mComplectedXPosition的方法已经在前面详细说明
 
 ```java		
@@ -287,7 +287,7 @@ DashPathEffect:DashPathEffect是PathEffect类的一个子类,可以使paint画�
 ```
 这里onSizeChanged（）方法里取mLeftY，mRightY是为了方便之后画矩形。
 
-###第四步 protected synchronized void onDraw(Canvas canvas)
+### 第四步 protected synchronized void onDraw(Canvas canvas)
 重重之重的方法来了，就会绘制该view所调用的方法，我们来看代码
 
 ```java
@@ -407,7 +407,7 @@ DashPathEffect:DashPathEffect是PathEffect类的一个子类,可以使paint画�
         //-----------------------画图标--------------------------------------------------------------
 ```
 
-##StepView
+## StepView
 好了StepsViewIndicator是不是已经完全熟悉了呢，下面我们看StepView.StepView其实组合控件，设置其子控件的属性，包括颜色，position的状态...其中有一个方法我们来看下，就是对于设置TextView的。
 
 ```java
@@ -444,7 +444,7 @@ DashPathEffect:DashPathEffect是PathEffect类的一个子类,可以使paint画�
 
 好了，其实到了这里，基本上也要接近尾声了.有了前面知识的积累，写VerticalStepView是不是就思路更加明确了呢？其实这个控件看起来‘很复杂’，翻了翻代码，看了也没有多大难度，小伙伴们，只要静下心来，花点时间研究下，发现，也就是那么回事，只要努力，就会有收货。
 
-###VerticalStepView
+### VerticalStepView
 这里就不在啰嗦的阐述VerticalStepView的原理啦，有了上面的HorizontalStepsViewIndicator的讲解，在来看看VerticalStepView应该是非常轻松的吧，好了，有想法的小伙伴何不尝试自己来写这个VerticalStepView，相信你可以的！！！
 
 * 【VerticalStepView参考地址】[VerticalStepView](https://github.com/baoyachi/StepView/blob/master/stepview/src/main/java/com/baoyachi/stepview/VerticalStepViewIndicator.java)
